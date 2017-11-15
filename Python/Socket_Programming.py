@@ -1,75 +1,56 @@
+# 1 - Import library
+import pygame
+from pygame.locals import *
 
-import socket
-import cv2
-import time
-import threading
-import Tkinter
-cam = cv2.VideoCapture(0)
+# 2 - Initialize the game
+pygame.init()
+width, height = 640, 480
+screen=pygame.display.set_mode((width, height))
+keys = [False, False, False, False]
+playerpos=[100,100]
 
-def get_image():
-	retval,im = cam.read()
-	cv2.imwrite("sendlast.jpg",im)
-	return im
-        
-class thread_get_command(threading.Thread):
-        def __init__(self,threadID, threadName, host, port):
-                threading.Thread.__init__(self)
-                self.threadID = threadID
-                self.threadName = threadName
-                self.port = port
-                self.host = host
-        def run(self):
-                soc = socket.socket()
-                soc.bind((self.host,self.port))
-                soc.listen(5)
-                while 1:
-                        conn,addr = soc.accept()
-                        msg = conn.recv(1024)
-                        if msg is None or msg == "":
-				continue
-			if "1" in msg:
-				print "Move Up"
-			elif "2" in msg:
- 				print "Move Down"
-			elif "3" in msg:
-				print "Move Left"
-			elif "4" in msg:
-				print "Move Right"
-			elif "5" in msg:
-				print "Move Stop"
-			else:
-				print msg
-                                               
-class thread_send_images(threading.Thread):
-        def __init__(self,threadID,threadName,host,port):
-                threading.Thread.__init__(self)
-                self.threadID = threadID
-                self.threadName = threadName
-                self.port = port
-                self.host = host
-        def run(self):
-                soc = socket.socket()
-                soc.bind((self.host,self.port))
-                soc.listen(5)
-                while 1:
-                        conn,addr = soc.accept()
-                        print "In socket accept while: Thread 2"
-                        while 1:
-                                ret,buf = cv2.imencode('.jpg',get_image())
-                                conn.send(bytearray(buf))
-                                
-host = "192.168.43.141"
-port = 2004
-portimg = 2005
-
-
-try:
-        thread1 = thread_get_command(1,"Thread-1",host,port)
-        #thread2 = thread_send_images(2,"Thread-2",host,portimg)
-        thread1.start()
-        #thread2.start()
-        print "I guess we started both!"
-        #thread1.join()
-        #thread2.join()
-except:
-   print "Error: unable to start thread"
+# 3 - Load images
+player = pygame.image.load("resources/images/mainicon.jpg")
+player = pygame.transform.scale(player,(200,200))
+# 4 - keep looping through
+while 1:
+    # 5 - clear the screen before drawing it again
+    screen.fill(0)
+    # 6 - draw the screen elements
+    screen.blit(player, playerpos)
+    # 7 - update the screen
+    pygame.display.flip()
+    # 8 - loop through the events
+    for event in pygame.event.get():
+        # check if the event is the X button 
+        if event.type==pygame.QUIT:
+            # if it is quit the game
+            pygame.quit() 
+            exit(0)
+	if event.type == pygame.KEYDOWN:
+            if event.key==K_w:
+                keys[0]=True
+            elif event.key==K_a:
+                keys[1]=True
+            elif event.key==K_s:
+                keys[2]=True
+            elif event.key==K_d:
+                keys[3]=True
+        if event.type == pygame.KEYUP:
+            if event.key==pygame.K_w:
+                keys[0]=False
+            elif event.key==pygame.K_a:
+                keys[1]=False
+            elif event.key==pygame.K_s:
+                keys[2]=False
+            elif event.key==pygame.K_d:
+                keys[3]=False
+	# 9 - Move player
+    	if keys[0]:
+        	playerpos[1]-=5
+    	elif keys[2]:
+        	playerpos[1]+=5
+    	if keys[1]:
+        	playerpos[0]-=5
+    	elif keys[3]:
+        	playerpos[0]+=5
