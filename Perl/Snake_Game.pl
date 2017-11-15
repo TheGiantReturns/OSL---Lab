@@ -128,40 +128,6 @@ sub takeinput{
 	}
 }
 
-sub update_display{
-	#print "Score: $size\n";
-	for $i(0..$no_pixels-1){
-		for $j(0..$no_pixels-1){
-			$decider = 1;#int(rand(2));
-			if($i==$random_mouse_x && $j ==$random_mouse_y){
-				$pixel_frames[$i][$j]->configure(-background => "white");
-			}elsif($pixel[$i][$j]==1){
-				if($i==$snake_description[0][0]&&$j==$snake_description[0][1]){
-					$pixel_frames[$i][$j]->configure(-background => "black");
-				}else{
-					if($decider==1){
-						$pixel_frames[$i][$j]->configure(-background => "brown");
-					}else{
-						$pixel_frames[$i][$j]->configure(-background => "yellow");
-					}
-				}
-				
-			}elsif($pixel[$i][$j]==0){
-				 if($decider==1){
-					$pixel_frames[$i][$j]->configure(-background => "darkseagreen");
-				}else{
-					$pixel_frames[$i][$j]->configure(-background => "green");
-				}
-			}elsif($pixel[$i][$j]==3){
-				 $pixel_frames[$i][$j]->configure(-background => "green");
-			}
-		}
-	}
-	for $i(0..$size-1){
-		#print "$i: $snake_description[$i][0] $snake_description[$i][1] $snake_direction[$i]\n";
-	}
-	$mw->update;
-}
 sub dead{
 	print "You are dead\nFinal Score: $size\n";
 }
